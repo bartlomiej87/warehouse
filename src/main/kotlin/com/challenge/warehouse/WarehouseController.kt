@@ -12,6 +12,7 @@ class WarehouseController(private val patientsRepository: PatientRepository) {
 
     @GetMapping("ware")
     fun getAllPatients(): ResponseEntity<MutableList<Patient>> {
+
         patientsRepository.save(Patient(name = "test", description = "test"))
         return ResponseEntity.ok(patientsRepository.findAll())
     }
