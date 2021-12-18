@@ -24,9 +24,12 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+	implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.13.0")
+	implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.0")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
 	testImplementation("org.testcontainers:junit-jupiter")
 }
 
