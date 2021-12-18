@@ -1,0 +1,35 @@
+swagger: "2.0"
+info:
+  description: "Warehouse API"
+  version: "1.0.0"
+  title: "Simple Warehouse data"
+host: "localhost:8080"
+basePath: "/v1"
+tags:
+  - name: "warehouse"
+    description: "warehouse"
+paths:
+  /campaign:
+    get:
+      tags:
+        - "warehouse"
+      summary: "Get available campaign"
+      description: "Multiple status values can be provided with comma separated strings"
+      operationId: "getAvailableCampaigns"
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Campaign"
+definitions:
+  Campaign:
+    type: "object"
+    properties:
+      id:
+        type: "string"
+      name:
+        type: "string"
