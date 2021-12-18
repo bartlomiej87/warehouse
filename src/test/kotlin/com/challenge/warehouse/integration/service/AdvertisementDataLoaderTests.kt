@@ -28,6 +28,8 @@ class AdvertisementDataLoaderTests {
     fun `should load data from csv and populate to database`() {
         //when
         dataLoader.loadAndPopulateToDb("data_input_test.csv")
+        // to check if there is no duplicates in db
+        dataLoader.loadAndPopulateToDb("data_input_test.csv")
 
         //then
         val googleAds = advertisementRepository.findByDatasource("Google Ads")!!

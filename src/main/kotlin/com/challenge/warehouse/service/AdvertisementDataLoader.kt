@@ -21,7 +21,7 @@ class AdvertisementDataLoader(private val advertisementRepository: Advertisement
         loadAndPopulateToDb("data_input.csv")
     }
 
-    fun loadAndPopulateToDb(fileName: String) {
+    internal fun loadAndPopulateToDb(fileName: String) {
         loadObjectList(fileName).groupBy { it.datasource }.let { records ->
             records.keys.forEach { datasource ->
                 findOrCreateNewAd(datasource = datasource).apply {
