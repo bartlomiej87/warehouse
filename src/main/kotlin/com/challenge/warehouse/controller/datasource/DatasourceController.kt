@@ -1,7 +1,7 @@
-package com.challenge.warehouse
+package com.challenge.warehouse.controller.datasource
 
 import com.challenge.warehouse.api.DatasourceApi
-import com.challenge.warehouse.api.model.Datasource
+import com.challenge.warehouse.api.model.Dimensions
 import com.challenge.warehouse.repository.DatasourceRepository
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
@@ -11,7 +11,7 @@ class DatasourceController(
     private val datasourceRepository: DatasourceRepository
 ) : DatasourceApi {
 
-    override fun getAvailableDatasource(): ResponseEntity<List<Datasource>> {
-        return ResponseEntity.ok(datasourceRepository.findAll().map { Datasource(id = it.id, name = it.name) })
+    override fun getAvailableDatasource(): ResponseEntity<List<Dimensions>> {
+        return ResponseEntity.ok(datasourceRepository.findAll().map { Dimensions(id = it.id, name = it.name) })
     }
 }

@@ -8,6 +8,8 @@ basePath: "/v1"
 tags:
   - name: "warehouse"
     description: "warehouse"
+schemes:
+  - http
 paths:
   /datasource:
     get:
@@ -23,9 +25,96 @@ paths:
           schema:
             type: "array"
             items:
-              $ref: "#/definitions/Datasource"
+              $ref: "#/definitions/Dimensions"
+  /analytics:
+    get:
+      tags:
+        - "warehouse"
+      summary: "Get available analytics"
+      operationId: "getAnalytics"
+      produces:
+        - "application/json"
+      parameters:
+        - name: metrics
+          in: query
+          description:  Set of metrics (plus calculated ones) to be aggregated on
+          required: true
+          type: array
+          items:
+            type: string
+            enum:
+              - clicks
+              - impressions
+            default: clicks
+          collectionFormat: multi
+        - name: dimensions
+          in: query
+          description: an optional set of dimensions to be grouped by
+          type: string
+          enum:
+            - campaign
+            - datasource
+          default: campaign
+        - name: dateFrom
+          in: query
+          description: date from
+          type: string
+        - name: dateTo
+          in: query
+          description: date from
+          type: string
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Analytics"
+  /analytics/dimentions:
+    get:
+      tags:
+        - "warehouse"
+      summary: "Find datasource or campaign which meets metrics criteria"
+      operationId: "getAnalyticDimensions"
+      produces:
+        - "application/json"
+      parameters:
+        - name: metrics
+          in: query
+          description:  Set of metrics (plus calculated ones) to be aggregated on
+          required: true
+          type: string
+          enum:
+            - clicks
+            - impressions
+            - ctr
+          default: clicks
+        - name: dimensions
+          required: true
+          in: query
+          description: an optional set of dimensions to be grouped by
+          type: string
+          enum:
+            - campaign
+            - datasource
+          default: campaign
+        - name: valueFrom
+          in: query
+          description: date from
+          type: number
+        - name: valueTo
+          in: query
+          description: date from
+          type: number
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Dimensions"
 definitions:
-  Datasource:
+  Dimensions:
     required:
       - id
       - name
@@ -34,4 +123,21 @@ definitions:
       id:
         type: "string"
       name:
+        type: "string"
+  Analytics:
+    type: "object"
+    properties:
+      totalClicks:
+        type: "integer"
+      totalImpressions:
+        type: "integer"
+      clickThroughRate:
+        type: "number"
+      dimension:
+        type: "string"
+      dimensionName:
+        type: "string"
+      dateFrom:
+        type: "string"
+      dateTo:
         type: "string"
