@@ -43,12 +43,12 @@ class CampaignDataLoaderTests {
         val touristikCampaign = campaignRepository.findByName("Adventmarkt Touristik")!!
         val remarketingCampaign = campaignRepository.findByName("Remarketing")!!
         val schutzbriefCampaign = campaignRepository.findByName("Schutzbrief Image|SN")!!
-        assertEquals(2, touristikCampaign.advertisements.size)
-        assertEquals(2, touristikCampaign.advertisements.single { it.id == googleId }.adSnapshots.size)
-        assertEquals(1, touristikCampaign.advertisements.single { it.id == facebookId }.adSnapshots.size)
-        assertEquals(1, remarketingCampaign.advertisements.size)
-        assertEquals(7, remarketingCampaign.advertisements.single { it.id == googleId }.adSnapshots.size)
-        assertEquals(1, schutzbriefCampaign.advertisements.size)
-        assertEquals(10, schutzbriefCampaign.advertisements.single { it.id == twitterId }.adSnapshots.size)
+        assertEquals(2, touristikCampaign.campaignDetails.size)
+        assertEquals(2, touristikCampaign.campaignDetails.single { it.datasourceId == googleId }.adSnapshots.size)
+        assertEquals(1, touristikCampaign.campaignDetails.single { it.datasourceId == facebookId }.adSnapshots.size)
+        assertEquals(1, remarketingCampaign.campaignDetails.size)
+        assertEquals(7, remarketingCampaign.campaignDetails.single { it.datasourceId == googleId }.adSnapshots.size)
+        assertEquals(1, schutzbriefCampaign.campaignDetails.size)
+        assertEquals(10, schutzbriefCampaign.campaignDetails.single { it.datasourceId == twitterId }.adSnapshots.size)
     }
 }

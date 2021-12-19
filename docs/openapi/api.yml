@@ -9,13 +9,12 @@ tags:
   - name: "warehouse"
     description: "warehouse"
 paths:
-  /campaign:
+  /datasource:
     get:
       tags:
         - "warehouse"
-      summary: "Get available campaign"
-      description: "Multiple status values can be provided with comma separated strings"
-      operationId: "getAvailableDatasources"
+      summary: "Get available datasource"
+      operationId: "getAvailableDatasource"
       produces:
         - "application/json"
       responses:
@@ -27,6 +26,9 @@ paths:
               $ref: "#/definitions/Datasource"
 definitions:
   Datasource:
+    required:
+      - id
+      - name
     type: "object"
     properties:
       id:

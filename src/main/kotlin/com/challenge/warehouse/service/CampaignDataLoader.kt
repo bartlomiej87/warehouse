@@ -1,8 +1,8 @@
 package com.challenge.warehouse.service
 
 import com.challenge.warehouse.entity.AdSnapshot
-import com.challenge.warehouse.entity.Advertisement
 import com.challenge.warehouse.entity.Campaign
+import com.challenge.warehouse.entity.CampaignDetails
 import com.challenge.warehouse.entity.Datasource
 import com.challenge.warehouse.repository.CampaignRepository
 import com.challenge.warehouse.repository.DatasourceRepository
@@ -56,9 +56,9 @@ class CampaignDataLoader(
     ) {
         val datasourceId = datasources.single { it.name == datasource }.id
         with(campaignsPerDatasource.getValue(datasource)) {
-            advertisements.find { it.id == datasourceId }
+            campaignDetails.find { it.datasourceId == datasourceId }
                 ?.addSnapshots(this)
-                ?: advertisements.add(createNewAdvertisements(this, datasourceId))
+                ?: campaignDetails.add(createNewAdvertisements(this, datasourceId))
         }
     }
 
@@ -67,7 +67,7 @@ class CampaignDataLoader(
 
     private fun findOrCreateNewCampaign(campaign: String) =
         campaignRepository.findByName(campaign) ?: Campaign(
-            name = campaign, advertisements = mutableSetOf()
+            name = campaign, campaignDetails = mutableSetOf()
         )
 
     private fun loadObjectList(fileName: String): List<Record> {
@@ -78,12 +78,12 @@ class CampaignDataLoader(
         }
     }
 
-    private fun Advertisement.addSnapshots(records: List<Record>) {
+    private fun CampaignDetails.addSnapshots(records: List<Record>) {
         apply { adSnapshots.addAll(records.toCampaignSnapshots()) }
     }
 
     private fun List<Record>.toAdvertisements(id: String) =
-        Advertisement(id = id, adSnapshots = toCampaignSnapshots())
+        CampaignDetails(datasourceId = id, adSnapshots = toCampaignSnapshots())
 
     private fun List<Record>.toCampaignSnapshots() = map {
         AdSnapshot(snapshotDate = it.daily, clicks = it.clicks, impressions = it.impressions)

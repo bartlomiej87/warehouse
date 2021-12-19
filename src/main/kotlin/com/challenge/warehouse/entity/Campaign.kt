@@ -7,14 +7,19 @@ import java.util.*
 
 @Document
 data class Campaign(
-    @Id val id: String = UUID.randomUUID().toString(), val name: String, val advertisements: MutableSet<Advertisement>
+    @Id
+    val id: String = UUID.randomUUID().toString(),
+    val name: String,
+    val campaignDetails: MutableSet<CampaignDetails>
 )
 
-data class Advertisement(
-    val id: String,
+data class CampaignDetails(
+    val datasourceId: String,
     val adSnapshots: MutableSet<AdSnapshot>,
 )
 
 data class AdSnapshot(
-    val snapshotDate: LocalDate, val clicks: Int, val impressions: Int
+    val snapshotDate: LocalDate,
+    val clicks: Int,
+    val impressions: Int
 )

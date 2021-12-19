@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.RestController
 
 
 @RestController
-class WarehouseController(private val campaignRepository: CampaignRepository) {
+class WarehouseController(
+    private val campaignRepository: CampaignRepository
+) {
 
     @GetMapping("ware")
     fun getCampaign(): ResponseEntity<MutableList<Campaign>> {
