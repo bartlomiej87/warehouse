@@ -15,7 +15,7 @@ paths:
         - "warehouse"
       summary: "Get available campaign"
       description: "Multiple status values can be provided with comma separated strings"
-      operationId: "getAvailableCampaigns"
+      operationId: "getAvailableDatasources"
       produces:
         - "application/json"
       responses:
@@ -24,9 +24,9 @@ paths:
           schema:
             type: "array"
             items:
-              $ref: "#/definitions/Campaign"
+              $ref: "#/definitions/Datasource"
 definitions:
-  Campaign:
+  Datasource:
     type: "object"
     properties:
       id:
