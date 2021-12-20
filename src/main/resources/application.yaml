@@ -1,6 +1,8 @@
 spring:
   datamongodb.database: warehouse
-  jackson.serialization.write_dates_as_timestamps: false
+  jackson:
+    serialization.write_dates_as_timestamps: false
+    default-property-inclusion: non_null
 server:
   shutdown: graceful
 logging:
