@@ -54,14 +54,15 @@ paths:
           enum:
             - campaign
             - datasource
-          default: campaign
         - name: dateFrom
           in: query
           description: date from
           type: string
+          format: date
         - name: dateTo
           in: query
           description: date from
+          format: date
           type: string
       responses:
         "200":
