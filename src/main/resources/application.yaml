@@ -5,6 +5,10 @@ spring:
     default-property-inclusion: non_null
 server:
   shutdown: graceful
+  error:
+    whitelabel:
+      include-message: always
+      enabled: false
 logging:
   level.org.springframework.web: DEBUG
 management:

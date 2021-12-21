@@ -6,21 +6,23 @@ import com.challenge.warehouse.api.model.Dimensions
 import com.challenge.warehouse.error.ErrorCodes.WRONG_DATE_RANGE
 import com.challenge.warehouse.error.ErrorCodes.WRONG_DIMENSION_PARAMETER
 import com.challenge.warehouse.error.ErrorCodes.WRONG_METRIC_PARAMETER
+import com.challenge.warehouse.model.Dimension
 import com.challenge.warehouse.model.Dimension.CAMPAIGN
 import com.challenge.warehouse.model.Dimension.DATASOURCE
+import com.challenge.warehouse.model.Metric
 import com.challenge.warehouse.model.Metric.CLICKS
 import com.challenge.warehouse.model.Metric.IMPRESSIONS
+import com.challenge.warehouse.model.RequestData
 import com.challenge.warehouse.model.exception.ValidationException
-import com.challenge.warehouse.repository.AnalyticsAggregatorRepository
+import com.challenge.warehouse.service.aggregator.AnalyticsAggregator
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 import java.math.BigDecimal
-import java.math.RoundingMode.HALF_UP
 import java.time.LocalDate
 
 @RestController
 class AnalyticsController(
-    private val aggregatorRepository: AnalyticsAggregatorRepository
+    private val analyticsAggregator: AnalyticsAggregator
 ) : AnalyticsApi {
 
     override fun getAnalyticDimensions(
@@ -39,14 +41,24 @@ class AnalyticsController(
         dateTo: LocalDate?
     ): ResponseEntity<List<Analytics>> {
         validate(metrics, dimensions, dateFrom, dateTo)
-        return ResponseEntity.ok(aggregatorRepository.aggregateByCampaign().map {
-            Analytics(
-                totalClicks = it.totalClicks,
-                totalImpressions = it.totalImpressions,
-                clickThroughRate = it.clickThroughRate.setScale(2, HALF_UP),
-                dimensionName = it.dimensionId
-            )
-        })
+        return ResponseEntity.ok(
+            analyticsAggregator.findAnalytics(
+                RequestData(
+                    metrics = metrics.map { Metric.valueOf(it.uppercase()) }.toSet(),
+                    dimension = mapToDimension(dimensions),
+                    dateFrom = dateFrom,
+                    dateTo = dateTo
+                )
+            ).map { it.toContract() }
+        )
+    }
+
+    private fun mapToDimension(dimensions: String?): Dimension? {
+        return if (dimensions != null) {
+            Dimension.valueOf(dimensions.uppercase())
+        } else {
+            null
+        }
     }
 
     private fun validate(metrics: List<String>, dimensions: String?, dateFrom: LocalDate?, dateTo: LocalDate?) {
