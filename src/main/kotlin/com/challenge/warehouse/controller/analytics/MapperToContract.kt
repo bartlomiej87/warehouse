@@ -9,5 +9,5 @@ fun AnalyticsView.toContract() =
         totalClicks = totalClicks,
         totalImpressions = totalImpressions,
         clickThroughRate = clickThroughRate?.setScale(2, RoundingMode.HALF_UP),
-        dimensionName = dimensionId
+        dimensionName = dimensionName
     )

@@ -4,15 +4,18 @@ import com.challenge.warehouse.model.AnalyticsView
 import com.challenge.warehouse.model.Metric
 import com.challenge.warehouse.model.Metric.CLICKS
 import com.challenge.warehouse.model.Metric.IMPRESSIONS
+import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.MongoTemplate
 import org.springframework.data.mongodb.core.aggregation.Aggregation.bind
 import org.springframework.data.mongodb.core.aggregation.Aggregation.group
 import org.springframework.data.mongodb.core.aggregation.Aggregation.match
 import org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation
 import org.springframework.data.mongodb.core.aggregation.Aggregation.project
+import org.springframework.data.mongodb.core.aggregation.Aggregation.sort
 import org.springframework.data.mongodb.core.aggregation.Aggregation.unwind
 import org.springframework.data.mongodb.core.aggregation.GroupOperation
 import org.springframework.data.mongodb.core.aggregation.ProjectionOperation
+import org.springframework.data.mongodb.core.aggregation.SortOperation
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.stereotype.Component
 import java.time.LocalDate
@@ -27,7 +30,7 @@ private const val TOTAL_IMPRESSIONS = "totalImpressions"
 private const val CLICK_THROUGH_RATE = "clickThroughRate"
 private const val CAMPAIGN_COLLECTION = "campaign"
 private const val ID = "_id"
-private const val DIMENSION_ID = "dimensionId"
+private const val DIMENSION_ID = "dimensionName"
 
 @Component
 class AnalyticsAggregatorRepositoryImpl(private val mongoTemplate: MongoTemplate) : AnalyticsAggregatorRepository {
@@ -62,13 +65,14 @@ class AnalyticsAggregatorRepositoryImpl(private val mongoTemplate: MongoTemplate
         dateFrom: LocalDate?,
         dateTo: LocalDate?
     ): MutableList<AnalyticsView> {
-        val (grouping, project) = prepareQuery(dimensionType, metrics)
+        val (grouping, project, sort) = prepareQuery(dimensionType, metrics)
         return newAggregation(
             unwind(CAMPAIGN_DETAILS),
             unwind(CAMPAIGN_DETAILS_AD_SNAPSHOTS),
             match(prepareDateCriteria(dateFrom, dateTo)),
             grouping,
-            project
+            project,
+            sort
         ).run {
             mongoTemplate.aggregate(this, CAMPAIGN_COLLECTION, AnalyticsView::class.java).mappedResults
         }
@@ -91,22 +95,26 @@ class AnalyticsAggregatorRepositoryImpl(private val mongoTemplate: MongoTemplate
     private fun prepareQuery(
         dimensionType: String,
         metrics: Set<Metric>
-    ): Pair<GroupOperation, ProjectionOperation> {
+    ): Triple<GroupOperation, ProjectionOperation, SortOperation> {
         var grouping = group(dimensionType)
         var project = project().andInclude(bind(DIMENSION_ID, ID)).andExclude(ID)
+        var sort = sort(Sort.by(TOTAL_CLICKS))
         metrics.find { it == CLICKS }?.run {
             grouping = grouping.sum(CAMPAIGN_DETAILS_AD_SNAPSHOTS_CLICKS).`as`(TOTAL_CLICKS)
             project = project.andInclude(TOTAL_CLICKS)
+            sort  = sort(Sort.Direction.DESC, TOTAL_CLICKS)
         }
         metrics.find { it == IMPRESSIONS }?.run {
             grouping = grouping.sum(CAMPAIGN_DETAILS_AD_SNAPSHOTS_IMPRESSIONS).`as`(TOTAL_IMPRESSIONS)
             project = project.andInclude(TOTAL_IMPRESSIONS)
+            sort  = sort(Sort.Direction.DESC, TOTAL_IMPRESSIONS)
         }
         metrics.takeIf { it.containsAll(Metric.values().toList()) }
             ?.run {
                 project = project.and(TOTAL_CLICKS).divide(TOTAL_IMPRESSIONS).`as`(CLICK_THROUGH_RATE)
+                sort  = sort(Sort.Direction.DESC, TOTAL_CLICKS)
             }
-        return Pair(grouping, project)
+        return Triple(grouping, project, sort)
     }
 
 }

@@ -27,9 +27,9 @@ class AnalyticsAggregatorQueryTests : BaseIT() {
         // then
         with(result) {
             assertEquals(3, size)
-            val googleAnalytics = single { it.dimensionId == googleId }
-            val facebookAnalytics = single { it.dimensionId == facebookId }
-            val twitterAnalytics = single { it.dimensionId == twitterId }
+            val googleAnalytics = single { it.dimensionName == googleId }
+            val facebookAnalytics = single { it.dimensionName == facebookId }
+            val twitterAnalytics = single { it.dimensionName == twitterId }
             assertEquals(39, googleAnalytics.totalClicks)
             assertEquals(71454, googleAnalytics.totalImpressions)
             assertEquals(BigDecimal("0.00"), googleAnalytics.clickThroughRate?.setScale(2, HALF_UP))
@@ -53,9 +53,9 @@ class AnalyticsAggregatorQueryTests : BaseIT() {
             val campaignName1 = "Schutzbrief Image|SN"
             val campaignName2 = "Remarketing"
             val campaignName3 = "Adventmarkt Touristik"
-            val campaignAnalytics1 = single { it.dimensionId == campaignName1 }
-            val campaignAnalytics2 = single { it.dimensionId == campaignName2 }
-            val campaignAnalytics3 = single { it.dimensionId == campaignName3 }
+            val campaignAnalytics1 = single { it.dimensionName == campaignName1 }
+            val campaignAnalytics2 = single { it.dimensionName == campaignName2 }
+            val campaignAnalytics3 = single { it.dimensionName == campaignName3 }
             assertEquals(1022, campaignAnalytics1.totalClicks)
             assertEquals(8244, campaignAnalytics1.totalImpressions)
             assertEquals(BigDecimal("0.12"), campaignAnalytics1.clickThroughRate?.setScale(2, HALF_UP))
@@ -79,7 +79,7 @@ class AnalyticsAggregatorQueryTests : BaseIT() {
             val analytics = single()
             assertEquals(1140, analytics.totalClicks)
             assertEquals(120585, analytics.totalImpressions)
-            assertNull(analytics.dimensionId)
+            assertNull(analytics.dimensionName)
             assertEquals(BigDecimal("0.01"), analytics.clickThroughRate?.setScale(2, HALF_UP))
         }
     }
