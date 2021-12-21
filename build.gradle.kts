@@ -61,6 +61,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
     testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation("io.mockk:mockk:1.12.1")
 }
 
 dependencyManagement {
