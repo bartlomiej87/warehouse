@@ -30,7 +30,7 @@ paths:
     get:
       tags:
         - "warehouse"
-      summary: "Get available analytics"
+      summary: "Find available analytics and filter by params"
       operationId: "findAnalyticsByParam"
       produces:
         - "application/json"

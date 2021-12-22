@@ -16,6 +16,8 @@ import com.challenge.warehouse.model.Metric.IMPRESSIONS
 import com.challenge.warehouse.model.TopCampaignRequest
 import com.challenge.warehouse.model.exception.ValidationException
 import com.challenge.warehouse.service.aggregator.AnalyticsAggregator
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDate
@@ -25,11 +27,14 @@ class AnalyticsController(
     private val analyticsAggregator: AnalyticsAggregator
 ) : AnalyticsApi {
 
+    private val log: Logger = LoggerFactory.getLogger(this::class.java)
+
     override fun findTopCampaignBy(
         sortBy: String,
         dateFrom: LocalDate?,
         dateTo: LocalDate?
     ): ResponseEntity<List<Analytic>> {
+        log.info("Received GET request with params: sortBy: [$sortBy], dateFrom: [$dateFrom], dateTo: [$dateTo]")
         validateTopCampaignParams(sortBy, dateFrom, dateTo)
         return ResponseEntity.ok(
             analyticsAggregator.findTopCampaignBy(
@@ -39,6 +44,9 @@ class AnalyticsController(
                     dateTo = dateTo
                 )
             ).map { it.toContract() }
+                .also {
+                    log.info("Request processed successfully")
+                }
         )
     }
 
@@ -48,6 +56,7 @@ class AnalyticsController(
         dateFrom: LocalDate?,
         dateTo: LocalDate?
     ): ResponseEntity<List<Analytic>> {
+        log.info("Received GET request with params: sortBy: $metrics,dimensions [$dimensions], dateFrom: [$dateFrom], dateTo: [$dateTo]")
         validateAnalyticsParams(metrics, dimensions, dateFrom, dateTo)
         return ResponseEntity.ok(
             analyticsAggregator.findAnalytics(
@@ -58,6 +67,9 @@ class AnalyticsController(
                     dateTo = dateTo
                 )
             ).map { it.toContract() }
+                .also {
+                    log.info("Request processed successfully")
+                }
         )
     }
 
