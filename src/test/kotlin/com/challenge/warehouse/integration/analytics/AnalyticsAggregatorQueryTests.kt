@@ -4,7 +4,9 @@ import com.challenge.warehouse.integration.BaseIT
 import com.challenge.warehouse.integration.IntegrationTest
 import com.challenge.warehouse.model.Metric
 import com.challenge.warehouse.model.Metric.CLICKS
+import com.challenge.warehouse.model.Metric.CTR
 import com.challenge.warehouse.model.Metric.IMPRESSIONS
+import com.challenge.warehouse.model.TopCampaignRequest
 import com.challenge.warehouse.repository.AnalyticsAggregatorRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
@@ -162,12 +164,10 @@ class AnalyticsAggregatorQueryTests : BaseIT() {
         // then
         with(result) {
             assertEquals(3, size)
-            val campaignName1 = "Schutzbrief Image|SN"
-            val campaignName2 = "Remarketing"
-            val campaignName3 = "Adventmarkt Touristik"
-            val campaignAnalytics1 = single { it.dimensionName == campaignName1 }
-            val campaignAnalytics2 = single { it.dimensionName == campaignName2 }
-            val campaignAnalytics3 = single { it.dimensionName == campaignName3 }
+
+            val campaignAnalytics1 = single { it.dimensionName == schutzbriefCampaign }
+            val campaignAnalytics2 = single { it.dimensionName == remarketingCampaign }
+            val campaignAnalytics3 = single { it.dimensionName == touristikCampaign }
             assertEquals(1022, campaignAnalytics1.totalClicks)
             assertEquals(8244, campaignAnalytics1.totalImpressions)
             assertEquals(BigDecimal("0.12"), campaignAnalytics1.clickThroughRate?.setScale(2, HALF_UP))
@@ -193,6 +193,66 @@ class AnalyticsAggregatorQueryTests : BaseIT() {
             assertEquals(120585, analytics.totalImpressions)
             assertNull(analytics.dimensionName)
             assertEquals(BigDecimal("0.01"), analytics.clickThroughRate?.setScale(2, HALF_UP))
+        }
+    }
+
+    @Test
+    fun `should return top campaigns and sort by ctr`() {
+        //when
+        val result = aggregatorRepository.findTopCampaign(TopCampaignRequest(CTR, null, null))
+
+        // then
+        with(result) {
+            assertEquals(3, size)
+            assertEquals(schutzbriefCampaign, result[0].dimensionName)
+            assertEquals(remarketingCampaign, result[1].dimensionName)
+            assertEquals(touristikCampaign, result[2].dimensionName)
+        }
+    }
+
+    @Test
+    fun `should return top campaigns and sort by total clicks`() {
+        //when
+        val result = aggregatorRepository.findTopCampaign(TopCampaignRequest(CLICKS, null, null))
+
+        // then
+        with(result) {
+            assertEquals(3, size)
+            assertEquals(schutzbriefCampaign, result[0].dimensionName)
+            assertEquals(touristikCampaign, result[1].dimensionName)
+            assertEquals(remarketingCampaign, result[2].dimensionName)
+        }
+    }
+
+    @Test
+    fun `should return top campaigns and sort by total impressions`() {
+        //when
+        val result = aggregatorRepository.findTopCampaign(TopCampaignRequest(IMPRESSIONS, null, null))
+
+        // then
+        with(result) {
+            assertEquals(3, size)
+            assertEquals(touristikCampaign, result[0].dimensionName)
+            assertEquals(schutzbriefCampaign, result[1].dimensionName)
+            assertEquals(remarketingCampaign, result[2].dimensionName)
+        }
+    }
+
+    @Test
+    fun `should return top campaigns and sort by total impressions and filter by dates`() {
+        //when
+        val result = aggregatorRepository.findTopCampaign(
+            TopCampaignRequest(
+                IMPRESSIONS,
+                dateFrom = LocalDate.parse("2019-11-12"),
+                dateTo = LocalDate.parse("2019-11-12")
+            )
+        )
+
+        // then
+        with(result) {
+            assertEquals(1, size)
+            assertEquals(touristikCampaign, result[0].dimensionName)
         }
     }
 }

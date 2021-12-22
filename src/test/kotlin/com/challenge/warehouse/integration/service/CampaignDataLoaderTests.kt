@@ -15,9 +15,9 @@ class CampaignDataLoaderTests : BaseIT() {
         `load data in to database`()
 
         //then
-        val touristikCampaign = campaignRepository.findByName("Adventmarkt Touristik")!!
-        val remarketingCampaign = campaignRepository.findByName("Remarketing")!!
-        val schutzbriefCampaign = campaignRepository.findByName("Schutzbrief Image|SN")!!
+        val touristikCampaign = campaignRepository.findByName(touristikCampaign)!!
+        val remarketingCampaign = campaignRepository.findByName(remarketingCampaign)!!
+        val schutzbriefCampaign = campaignRepository.findByName(schutzbriefCampaign)!!
         assertEquals(2, touristikCampaign.campaignDetails.size)
         assertEquals(2, touristikCampaign.campaignDetails.single { it.datasourceId == googleId }.adSnapshots.size)
         assertEquals(1, touristikCampaign.campaignDetails.single { it.datasourceId == facebookId }.adSnapshots.size)

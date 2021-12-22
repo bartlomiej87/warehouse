@@ -13,6 +13,10 @@ open class BaseIT {
     protected lateinit var facebookId: String
     protected lateinit var twitterId: String
 
+    protected val schutzbriefCampaign = "Schutzbrief Image|SN"
+    protected val remarketingCampaign = "Remarketing"
+    protected val touristikCampaign = "Adventmarkt Touristik"
+
     @Autowired
     protected lateinit var campaignRepository: CampaignRepository
 

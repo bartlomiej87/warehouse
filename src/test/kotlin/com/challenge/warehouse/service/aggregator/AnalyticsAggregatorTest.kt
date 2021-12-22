@@ -7,6 +7,7 @@ import com.challenge.warehouse.model.Dimension.CAMPAIGN
 import com.challenge.warehouse.model.Dimension.DATASOURCE
 import com.challenge.warehouse.model.Metric.CLICKS
 import com.challenge.warehouse.model.Metric.IMPRESSIONS
+import com.challenge.warehouse.model.TopCampaignRequest
 import com.challenge.warehouse.repository.AnalyticsAggregatorRepository
 import com.challenge.warehouse.repository.DatasourceRepository
 import io.mockk.MockKAnnotations
@@ -16,6 +17,7 @@ import io.mockk.impl.annotations.MockK
 import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 import java.util.*
 
 class AnalyticsAggregatorTest {
@@ -40,6 +42,7 @@ class AnalyticsAggregatorTest {
 
     @Test
     fun `should invoke campaign aggregator`() {
+        //given
         val metrics = setOf(CLICKS)
 
         every {
@@ -70,6 +73,7 @@ class AnalyticsAggregatorTest {
 
     @Test
     fun `should invoke datasource aggregator`() {
+        //given
         val metrics = setOf(CLICKS)
         val dimensionId = UUID.randomUUID().toString()
 
@@ -104,6 +108,7 @@ class AnalyticsAggregatorTest {
 
     @Test
     fun `should invoke aggregator without dimensions`() {
+        //given
         val metrics = setOf(CLICKS, IMPRESSIONS)
 
         every {
@@ -129,6 +134,22 @@ class AnalyticsAggregatorTest {
 
         verify {
             aggregatorRepository.aggregateWithoutDimension(metrics, null, null)
+        }
+    }
+
+    @Test
+    fun `should invoke find top campaign method of repository`() {
+        //given
+        val request = TopCampaignRequest(CLICKS, LocalDate.parse("2020-12-12"), LocalDate.parse("2020-12-12"))
+        every {
+            aggregatorRepository.findTopCampaign(request)
+        } returns listOf()
+        //when
+        analyticsAggregator.findTopCampaignBy(request)
+
+        //then
+        verify {
+            aggregatorRepository.findTopCampaign(request)
         }
     }
 }

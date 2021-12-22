@@ -33,9 +33,9 @@ class AnalyticsAggregator(
         }
     }
 
-    private fun findAllDatasources() = datasourceRepository.findAll()
-
     fun findTopCampaignBy(topCampaignRequest: TopCampaignRequest): List<AnalyticsView> {
-        return emptyList()
+        return aggregatorRepository.findTopCampaign(topCampaignRequest)
     }
+
+    private fun findAllDatasources() = datasourceRepository.findAll()
 }

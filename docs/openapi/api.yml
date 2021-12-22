@@ -75,14 +75,14 @@ paths:
     get:
       tags:
         - "warehouse"
-      summary: "Find top campaign and sorted by param"
+      summary: "Find top campaign and sort by param"
       operationId: "findTopCampaignBy"
       produces:
         - "application/json"
       parameters:
         - name: sortBy
           in: query
-          description:  Sorting param
+          description:  Sorting param clicks, impressions, ctr
           required: true
           type: string
           enum:
