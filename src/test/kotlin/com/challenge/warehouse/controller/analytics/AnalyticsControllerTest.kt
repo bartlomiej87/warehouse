@@ -3,6 +3,7 @@ package com.challenge.warehouse.controller.analytics
 import com.challenge.warehouse.error.ErrorCodes.WRONG_DATE_RANGE
 import com.challenge.warehouse.error.ErrorCodes.WRONG_DIMENSION_PARAMETER
 import com.challenge.warehouse.error.ErrorCodes.WRONG_METRIC_PARAMETER
+import com.challenge.warehouse.error.ErrorCodes.WRONG_SORT_BY_PARAMETERS
 import com.challenge.warehouse.service.aggregator.AnalyticsAggregator
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Nested
@@ -19,6 +20,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 
+private const val BASE_ANALYTICS_ENDPOINT = "/v1/analytics"
+private const val TOP_CAMPAIGN_ENDPOINT = "$BASE_ANALYTICS_ENDPOINT/campaign/top"
+
 @RunWith(SpringRunner::class)
 @WebMvcTest(AnalyticsController::class)
 class AnalyticsControllerTest {
@@ -33,11 +37,11 @@ class AnalyticsControllerTest {
     inner class `Analytics endpoint` {
 
         @Test
-        fun `should return analytics for provided params`() {
+        fun `should return status ok for provided params`() {
 
             //expect
             mvc.perform(
-                get("/v1/analytics")
+                get(BASE_ANALYTICS_ENDPOINT)
                     .queryParam("metrics", "clicks", "impressions")
                     .queryParam("dimensions", "datasource")
                     .queryParam("dateTo", "2021-12-22")
@@ -51,7 +55,7 @@ class AnalyticsControllerTest {
 
             //expect
             mvc.perform(
-                get("/v1/analytics")
+                get(BASE_ANALYTICS_ENDPOINT)
                     .queryParam("metrics", "likes", "impressions")
                     .queryParam("dimensions", "datasource")
                     .queryParam("dateTo", "2021-12-22")
@@ -66,7 +70,7 @@ class AnalyticsControllerTest {
 
             //expect
             mvc.perform(
-                get("/v1/analytics")
+                get(BASE_ANALYTICS_ENDPOINT)
                     .queryParam("metrics", "clicks", "impressions")
                     .queryParam("dimensions", "ADVERT")
                     .queryParam("dateTo", "2021-12-22")
@@ -81,7 +85,7 @@ class AnalyticsControllerTest {
 
             //expect
             mvc.perform(
-                get("/v1/analytics")
+                get(BASE_ANALYTICS_ENDPOINT)
                     .queryParam("metrics", "clicks", "impressions")
                     .queryParam("dimensions", "datasource")
                     .queryParam("dateTo", "2021-12-22")
@@ -96,9 +100,94 @@ class AnalyticsControllerTest {
 
             //expect
             mvc.perform(
-                get("/v1/analytics")
+                get(BASE_ANALYTICS_ENDPOINT)
                     .queryParam("metrics", "clicks", "impressions")
                     .queryParam("dimensions", "datasource")
+                    .queryParam("dateTo", "2021ss-12-22")
+                    .queryParam("dateFrom", "2022-11-22")
+                    .contentType(APPLICATION_JSON)
+            ).andExpect(status().isBadRequest)
+                .andExpect(jsonPath("message", equalTo("Parse attempt failed for value [2021ss-12-22]")))
+        }
+    }
+
+    @Nested
+    inner class `Analytics top campaign` {
+
+        @Test
+        fun `should return status ok for provided params and sort by clicks`() {
+
+            //expect
+            mvc.perform(
+                get(TOP_CAMPAIGN_ENDPOINT)
+                    .queryParam("sortBy", "clicks")
+                    .queryParam("dateTo", "2021-12-22")
+                    .queryParam("dateFrom", "2021-11-22")
+                    .contentType(APPLICATION_JSON)
+            ).andExpect(status().isOk)
+        }
+
+        @Test
+        fun `should return status ok for provided params and sort by impressions`() {
+
+            //expect
+            mvc.perform(
+                get(TOP_CAMPAIGN_ENDPOINT)
+                    .queryParam("sortBy", "impressions")
+                    .queryParam("dateTo", "2021-12-22")
+                    .queryParam("dateFrom", "2021-11-22")
+                    .contentType(APPLICATION_JSON)
+            ).andExpect(status().isOk)
+        }
+
+        @Test
+        fun `should return status ok for provided params and sort by crt`() {
+
+            //expect
+            mvc.perform(
+                get(TOP_CAMPAIGN_ENDPOINT)
+                    .queryParam("sortBy", "ctr")
+                    .queryParam("dateTo", "2021-12-22")
+                    .queryParam("dateFrom", "2021-11-22")
+                    .contentType(APPLICATION_JSON)
+            ).andExpect(status().isOk)
+        }
+
+        @Test
+        fun `should return bad request for provided wrong sort by params`() {
+
+            //expect
+            mvc.perform(
+                get(TOP_CAMPAIGN_ENDPOINT)
+                    .queryParam("sortBy", "likes")
+                    .queryParam("dateTo", "2021-12-22")
+                    .queryParam("dateFrom", "2021-11-22")
+                    .contentType(APPLICATION_JSON)
+            ).andExpect(status().isBadRequest)
+                .andExpect(jsonPath("message", equalTo(WRONG_SORT_BY_PARAMETERS)))
+        }
+
+        @Test
+        fun `should return bad request for wrong date range`() {
+
+            //expect
+            mvc.perform(
+                get(TOP_CAMPAIGN_ENDPOINT)
+                    .queryParam("sortBy", "ctr")
+                    .queryParam("dateTo", "2021-12-22")
+                    .queryParam("dateFrom", "2021-12-23")
+                    .contentType(APPLICATION_JSON)
+            ).andExpect(status().isBadRequest)
+                .andExpect(jsonPath("message", equalTo(WRONG_DATE_RANGE)))
+        }
+
+        @Test
+        fun `should return bad request for wrong date pattern`() {
+
+            //expect
+            mvc.perform(
+                get(TOP_CAMPAIGN_ENDPOINT)
+                    .queryParam("sortBy", "clicks")
                     .queryParam("dateTo", "2021ss-12-22")
                     .queryParam("dateFrom", "2022-11-22")
                     .contentType(APPLICATION_JSON)

@@ -1,12 +1,12 @@
 package com.challenge.warehouse.service.aggregator
 
 import com.challenge.warehouse.entity.Datasource
+import com.challenge.warehouse.model.AnalyticsRequestData
 import com.challenge.warehouse.model.AnalyticsView
 import com.challenge.warehouse.model.Dimension.CAMPAIGN
 import com.challenge.warehouse.model.Dimension.DATASOURCE
 import com.challenge.warehouse.model.Metric.CLICKS
 import com.challenge.warehouse.model.Metric.IMPRESSIONS
-import com.challenge.warehouse.model.RequestData
 import com.challenge.warehouse.repository.AnalyticsAggregatorRepository
 import com.challenge.warehouse.repository.DatasourceRepository
 import io.mockk.MockKAnnotations
@@ -55,7 +55,7 @@ class AnalyticsAggregatorTest {
 
         //when
         analyticsAggregator.findAnalytics(
-            RequestData(
+            AnalyticsRequestData(
                 metrics = metrics,
                 dimension = CAMPAIGN,
                 null,
@@ -90,7 +90,7 @@ class AnalyticsAggregatorTest {
 
         //when
         analyticsAggregator.findAnalytics(
-            RequestData(
+            AnalyticsRequestData(
                 metrics = metrics,
                 dimension = DATASOURCE,
                 null,
@@ -119,7 +119,7 @@ class AnalyticsAggregatorTest {
 
         //when
         analyticsAggregator.findAnalytics(
-            RequestData(
+            AnalyticsRequestData(
                 metrics = metrics,
                 dimension = null,
                 null,

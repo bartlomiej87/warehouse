@@ -2,9 +2,15 @@ package com.challenge.warehouse.model
 
 import java.time.LocalDate
 
-data class RequestData(
+data class AnalyticsRequestData(
     val metrics: Set<Metric>,
     val dimension: Dimension?,
+    val dateFrom: LocalDate?,
+    val dateTo: LocalDate?
+)
+
+data class TopCampaignRequest(
+    val sortBy: Metric,
     val dateFrom: LocalDate?,
     val dateTo: LocalDate?
 )
@@ -14,5 +20,5 @@ enum class Dimension {
 }
 
 enum class Metric {
-    CLICKS, IMPRESSIONS
+    CLICKS, IMPRESSIONS, CTR
 }

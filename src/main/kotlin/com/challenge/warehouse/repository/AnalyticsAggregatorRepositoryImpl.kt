@@ -102,19 +102,18 @@ class AnalyticsAggregatorRepositoryImpl(private val mongoTemplate: MongoTemplate
         metrics.find { it == CLICKS }?.run {
             grouping = grouping.sum(CAMPAIGN_DETAILS_AD_SNAPSHOTS_CLICKS).`as`(TOTAL_CLICKS)
             project = project.andInclude(TOTAL_CLICKS)
-            sort  = sort(Sort.Direction.DESC, TOTAL_CLICKS)
+            sort = sort(Sort.Direction.DESC, TOTAL_CLICKS)
         }
         metrics.find { it == IMPRESSIONS }?.run {
             grouping = grouping.sum(CAMPAIGN_DETAILS_AD_SNAPSHOTS_IMPRESSIONS).`as`(TOTAL_IMPRESSIONS)
             project = project.andInclude(TOTAL_IMPRESSIONS)
-            sort  = sort(Sort.Direction.DESC, TOTAL_IMPRESSIONS)
+            sort = sort(Sort.Direction.DESC, TOTAL_IMPRESSIONS)
         }
-        metrics.takeIf { it.containsAll(Metric.values().toList()) }
+        metrics.takeIf { it.containsAll(listOf(CLICKS, IMPRESSIONS)) }
             ?.run {
                 project = project.and(TOTAL_CLICKS).divide(TOTAL_IMPRESSIONS).`as`(CLICK_THROUGH_RATE)
-                sort  = sort(Sort.Direction.DESC, TOTAL_CLICKS)
+                sort = sort(Sort.Direction.DESC, TOTAL_CLICKS)
             }
         return Triple(grouping, project, sort)
     }
-
 }
