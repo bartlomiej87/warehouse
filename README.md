@@ -1,9 +1,9 @@
 # warehouse-service
 
 ## General info
-Simple data warehouse application which provides analytics data via GET endpoints.
-The application was deployed on AWS (Elastic Beanstalk) and it is available on: </br></br>
-**http://warehouse-env.eba-4tqrmjdu.eu-west-2.elasticbeanstalk.com/**
+Simple data warehouse application providing analytics data via GET endpoints.
+The application was deployed on AWS (Elastic Beanstalk) and is available on: </br></br>
+**http://warehouse-env.eba-4tqrmjdu.eu-west-2.elasticbeanstalk.com/v1/analytics?metrics=clicks&metrics=impressions**
 
 
 ## Stack technology
@@ -17,7 +17,7 @@ The application was deployed on AWS (Elastic Beanstalk) and it is available on: 
  * Mockk
  * Gradle
 
-Code was covered with three types of tests:
+The code was covered with three types of tests:
 * unit
 * integration
 * controller tests
@@ -30,7 +30,7 @@ git clone https://github.com/bartlomiej87/warehouse-service.git
 java -jar build/libs/warehouse-<version>.jar
 ```
 
-Note: before running application on local env you need to setup mongodb.</br>
+Note: before running the application on local env, you need to set up mongodb.</br>
 Docker setup:
 ```
 docker pull mongo:latest
@@ -39,11 +39,11 @@ docker run -d -p 27017:27017 --name <imageId> mongo:latest
 
 ## API
 Api contract was defined in [api.yml](docs/openapi/api.yml) </br>
-There is subtask(openApiGenerate) of gradle build which generates API based on api.yaml file.
+A subtask(`openApiGenerate`) of `gradle build` generates API based on api.yaml file.
 There are generated API interfaces and API model classes.
 
 ## Usage
-An application was deployed on AWS(Elastic beanstalk). Mongodb is installed (via ssh) on the same EC2 as application - as purpose of simplify setup.
+The application was deployed on AWS(`Elastic beanstalk`). Mongodb was installed (via ssh) on the same EC2 as the application - in order to simplify setup.
 
 Examples of requests:
 ```
@@ -53,7 +53,8 @@ http://warehouse-env.eba-4tqrmjdu.eu-west-2.elasticbeanstalk.com/v1/analytics?me
 http://warehouse-env.eba-4tqrmjdu.eu-west-2.elasticbeanstalk.com/v1/analytics/campaign/top?sortBy=ctr&dateFrom=2019-04-20&dateTo=2019-04-20
 ```
 
-I would suggest to import [api.yml](docs/openapi/api.yml) into Postman and send request via Postman
+Suggestion: </br> 
+* import [api.yml](docs/openapi/api.yml) into Postman and send request via Postman
 
 ## Possible extensions
  * dockerizing app (deploy to EKS)
